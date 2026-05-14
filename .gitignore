@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+instance/database.db
+.env
+instance/test_database.db
