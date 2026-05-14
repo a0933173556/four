@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0">
+            <div class="card-body p-5">
+                <h3 class="card-title text-center fw-bold mb-4">註冊新帳號</h3>
+                <form action="{{ url_for('auth.register') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-muted">帳號</label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-muted">密碼</label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirm_password" class="form-label text-muted">確認密碼</label>
+                        <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">完成註冊</button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-muted">已經有帳號了？ <a href="{{ url_for('auth.login') }}" class="text-primary text-decoration-none fw-bold">前往登入</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

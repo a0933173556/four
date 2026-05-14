@@ -15,5 +15,5 @@ CREATE TABLE IF NOT EXISTS carbon_records (
     carbon_amount REAL NOT NULL,
     suggestion TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

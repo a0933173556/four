@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h4 class="mb-0 text-center fw-bold">新增行為紀錄</h4>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('ledger.create_record') }}" method="POST">
+                    <div class="mb-4">
+                        <label for="category" class="form-label fw-bold">活動分類</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="" disabled selected>請選擇分類...</option>
+                            <option value="交通">🚗 交通</option>
+                            <option value="飲食">🍔 飲食</option>
+                            <option value="能源">⚡ 能源</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="action_name" class="form-label fw-bold">行為名稱</label>
+                        <select class="form-select" id="action_name" name="action_name" required>
+                            <option value="" disabled selected>請選擇行為...</option>
+                            <optgroup label="交通">
+                                <option value="car">獨自開車 (0.25 kg/km)</option>
+                                <option value="motorcycle">騎機車 (0.1 kg/km)</option>
+                                <option value="bus">搭公車 (0.04 kg/km)</option>
+                                <option value="mrt">搭捷運 (0.04 kg/km)</option>
+                            </optgroup>
+                            <optgroup label="飲食">
+                                <option value="beef">吃牛肉餐 (5.0 kg/餐)</option>
+                                <option value="chicken">吃雞肉餐 (1.5 kg/餐)</option>
+                                <option value="veg">吃蔬食餐 (0.5 kg/餐)</option>
+                            </optgroup>
+                            <optgroup label="能源">
+                                <option value="electricity">用電 (0.5 kg/度)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="parameter_value" class="form-label fw-bold">參數值</label>
+                        <div class="input-group">
+                            <input type="number" step="0.01" class="form-control" id="parameter_value" name="parameter_value" required placeholder="例如：幾公里、幾餐、幾度電">
+                        </div>
+                        <div class="form-text mt-2 text-muted">我們將根據此數值為您計算碳排放量，並提供專屬的智慧建議！</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">計算碳排並儲存</button>
+                        <a href="{{ url_for('ledger.index') }}" class="btn btn-light">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
