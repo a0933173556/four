@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="card glass-card">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h3 class="mb-0"><i class="bi bi-plus-circle-fill text-primary me-2"></i>登錄新行為</h3>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('ledger.create_record') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="category" class="form-label text-muted">行為分類</label>
+                        <select class="form-select text-light" id="category" name="category" required style="background-color: var(--secondary-bg);">
+                            <option value="">請選擇分類...</option>
+                            <option value="交通">交通</option>
+                            <option value="飲食">飲食</option>
+                            <option value="居住">居住</option>
+                            <option value="購物">購物</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="action_name" class="form-label text-muted">具體行為</label>
+                        <select class="form-select text-light" id="action_name" name="action_name" required style="background-color: var(--secondary-bg);">
+                            <option value="">請選擇行為...</option>
+                            <option value="搭乘捷運">搭乘捷運 (交通)</option>
+                            <option value="獨自開車">獨自開車 (交通)</option>
+                            <option value="外帶餐盒">外帶餐盒 (飲食)</option>
+                            <option value="冷氣一小時">冷氣一小時 (居住)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="parameter_value" class="form-label text-muted">數值 (公里數/次數/小時)</label>
+                        <input type="number" step="0.1" min="0" class="form-control" id="parameter_value" name="parameter_value" required placeholder="請輸入數值...">
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">儲存並計算碳排</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
