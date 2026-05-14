@@ -1,0 +1,116 @@
+:root {
+    --primary-glow: rgba(76, 175, 80, 0.2);
+    --bg-dark: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(30, 64, 175, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+/* Glassmorphism Navbar */
+.glass-navbar {
+    background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #4ade80, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Glass Cards */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px var(--primary-glow);
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: #4ade80;
+    box-shadow: 0 0 0 0.25rem rgba(74, 222, 128, 0.25);
+    color: #f8fafc;
+}
+
+.form-control::placeholder {
+    color: #64748b;
+}
+
+/* Inputs styling in select */
+.form-select option {
+    background-color: #1e293b;
+    color: #f8fafc;
+}
+
+/* Custom Button */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    color: white;
+}
+
+/* Alerts */
+.glass-alert {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid;
+    color: #f8fafc;
+}
+
+.alert-success { border-left-color: #10b981; }
+.alert-danger { border-left-color: #ef4444; }
+.alert-warning { border-left-color: #f59e0b; }
+.alert-info { border-left-color: #3b82f6; }
+
+/* Micro animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}登錄行為 - 數位足跡-碳排放行為帳本{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="d-inline-block p-3 rounded-circle mb-3" style="background: rgba(16, 185, 129, 0.1);">
+                    <i class="bi bi-pencil-square text-success fs-2"></i>
+                </div>
+                <h2 class="fw-bold mb-2">登錄新行為</h2>
+                <p class="text-secondary">記錄您的日常行為，我們將為您計算碳足跡</p>
+            </div>
+
+            <!-- 使用寫死的路徑以確保能連到 create_record，避免 url_for 解析錯誤的問題 -->
+            <form action="/records" method="POST">
+                <div class="mb-4">
+                    <label for="category" class="form-label fw-medium">行為分類</label>
+                    <select class="form-select" id="category" name="category" required onchange="updateActionOptions()">
+                        <option value="" disabled selected>請選擇大類...</option>
+                        <option value="食">食 (Food)</option>
+                        <option value="衣">衣 (Clothing)</option>
+                        <option value="住">住 (Housing)</option>
+                        <option value="行">行 (Transport)</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="action_name" class="form-label fw-medium">具體行為</label>
+                    <select class="form-select" id="action_name" name="action_name" required>
+                        <option value="" disabled selected>請先選擇大類</option>
+                    </select>
+                </div>
+
+                <div class="mb-5">
+                    <label for="parameter_value" class="form-label fw-medium d-flex justify-content-between">
+                        <span>參數值</span>
+                        <span id="parameter_unit" class="text-success small fw-bold"></span>
+                    </label>
+                    <input type="number" step="0.1" class="form-control" id="parameter_value" name="parameter_value" placeholder="請輸入數值" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-cloud-arrow-up me-2"></i>儲存紀錄
+                    </button>
+                    <a href="/" class="btn btn-link text-secondary text-decoration-none mt-2">
+                        取消並返回
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// 動態更新下拉選單與單位
+const optionsData = {
+    '食': {
+        items: ['牛肉', '豬肉', '雞肉', '魚肉', '蔬食'],
+        unit: '公斤 (kg)'
+    },
+    '衣': {
+        items: ['購買新衣', '購買二手衣'],
+        unit: '件'
+    },
+    '住': {
+        items: ['家庭用電', '家庭用水'],
+        unit: '度'
+    },
+    '行': {
+        items: ['開車', '機車', '大眾運輸', '步行/腳踏車'],
+        unit: '公里 (km)'
+    }
+};
+
+function updateActionOptions() {
+    const category = document.getElementById('category').value;
+    const actionSelect = document.getElementById('action_name');
+    const unitLabel = document.getElementById('parameter_unit');
+    
+    // 清空現有選項
+    actionSelect.innerHTML = '<option value="" disabled selected>請選擇具體行為...</option>';
+    
+    if (optionsData[category]) {
+        optionsData[category].items.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            actionSelect.appendChild(option);
+        });
+        unitLabel.textContent = `單位：${optionsData[category].unit}`;
+    } else {
+        unitLabel.textContent = '';
+    }
+}
+</script>
+{% endblock %}
