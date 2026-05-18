@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+            <h5 class="text-secondary mb-3"><i class="bi bi-cloud-haze2 me-2"></i>總碳排量</h5>
+            <h1 class="display-4 fw-bold text-white mb-0">{{ "%.2f"|format(total_carbon) }} <span class="fs-4 text-secondary">kg CO2e</span></h1>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+            <h5 class="text-secondary mb-3"><i class="bi bi-bullseye me-2"></i>每月目標</h5>
+            {% if target > 0 %}
+                <h1 class="display-4 fw-bold text-white mb-2">{{ "%.2f"|format(target) }} <span class="fs-4 text-secondary">kg CO2e</span></h1>
+                <div class="progress mt-2" style="height: 10px; background-color: rgba(255,255,255,0.1);">
+                    {% set percent = (total_carbon / target * 100) if target > 0 else 0 %}
+                    <div class="progress-bar {% if percent > 100 %}bg-danger{% else %}bg-success{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ percent > 100 and 100 or percent }}%" 
+                         aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">尚未設定目標</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+    <h3 class="fw-bold m-0">近期紀錄</h3>
+    <a href="{{ url_for('ledger.new_record') }}" class="btn btn-success-gradient rounded-pill px-4 py-2">
+        <i class="bi bi-plus-lg me-1"></i> 新增紀錄
+    </a>
+</div>
+
+<div class="glass-card overflow-hidden">
+    {% if records %}
+    <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0" style="background: transparent;">
+            <thead>
+                <tr style="border-bottom-color: rgba(255,255,255,0.1);">
+                    <th class="ps-4 py-3 text-secondary fw-normal">日期</th>
+                    <th class="py-3 text-secondary fw-normal">分類</th>
+                    <th class="py-3 text-secondary fw-normal">行為</th>
+                    <th class="py-3 text-secondary fw-normal">數值</th>
+                    <th class="py-3 text-secondary fw-normal">碳排量</th>
+                    <th class="py-3 text-secondary fw-normal">建議</th>
+                    <th class="pe-4 py-3 text-end text-secondary fw-normal">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr style="border-bottom-color: rgba(255,255,255,0.05);">
+                    <td class="ps-4 py-3 align-middle">{{ record.created_at[:16] }}</td>
+                    <td class="py-3 align-middle">
+                        {% if record.category == 'transport' %}<span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50">交通</span>
+                        {% elif record.category == 'food' %}<span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50">飲食</span>
+                        {% elif record.category == 'electricity' %}<span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-50">用電</span>
+                        {% else %}{{ record.category }}{% endif %}
+                    </td>
+                    <td class="py-3 align-middle fw-medium">{{ record.action_name }}</td>
+                    <td class="py-3 align-middle">{{ record.parameter_value }}</td>
+                    <td class="py-3 align-middle">
+                        <span class="text-danger fw-bold">+{{ "%.2f"|format(record.carbon_amount) }}</span> kg
+                    </td>
+                    <td class="py-3 align-middle text-muted small" style="max-width: 250px;">{{ record.suggestion or '-' }}</td>
+                    <td class="pe-4 py-3 align-middle text-end">
+                        <form action="{{ url_for('ledger.delete_record', id=record.id) }}" method="POST" class="d-inline" onsubmit="return confirm('確定要刪除這筆紀錄嗎？');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="bi bi-inbox display-1 mb-3 d-block opacity-50"></i>
+        <h5>目前沒有任何紀錄</h5>
+        <p>點擊右上方按鈕開始記錄你的碳足跡吧！</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
