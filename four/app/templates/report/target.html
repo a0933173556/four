@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm mt-5 border-0 rounded-3">
+            <div class="card-header bg-white text-center py-3 border-0">
+                <h4 class="mb-0 text-success fw-bold">🎯 設定每月減碳目標</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted mb-4 text-center">
+                    設定一個具體的減碳目標，系統將協助您追蹤每月的達成進度，一起邁向低碳生活。
+                </p>
+                <form action="{{ url_for('report.target') }}" method="POST">
+                    <div class="mb-4">
+                        <label for="target_carbon_emission" class="form-label fw-semibold">每月目標減碳量</label>
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="number" step="0.1" min="0" 
+                                   class="form-control border-success" 
+                                   id="target_carbon_emission" 
+                                   name="target_carbon_emission" 
+                                   value="{{ current_target }}" 
+                                   placeholder="例如: 50.5" required>
+                            <span class="input-group-text bg-success text-white border-success">kg CO2e</span>
+                        </div>
+                        <div class="form-text mt-2 text-secondary">請輸入一個正數。如果設為 0 表示尚未設定目標。</div>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg shadow-sm">儲存目標設定</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
