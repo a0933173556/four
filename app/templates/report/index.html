@@ -1,3 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2 class="fw-bold">碳排放分析報表</h2>
+        <p class="text-muted">這是根據您的紀錄產生的各分類碳排量統計。</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4">分類碳排統計</h5>
+                {% if category_data %}
+                    <ul class="list-group list-group-flush">
+                    {% for cat, amount in category_data.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="fs-5">{{ cat }}</span>
+                            <span class="badge bg-primary rounded-pill fs-6">{{ "%.2f"|format(amount) }} kg</span>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-0">尚無資料可供分析。</p>
+                        <a href="{{ url_for('ledger.new_record') }}" class="btn btn-sm btn-outline-success mt-3">去新增一筆紀錄</a>
 {% extends "base.html" %}
 
 {% block content %}
