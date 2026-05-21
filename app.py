@@ -1,10 +1,11 @@
 import os
-from dotenv import load_dotenv
-from app import create_app
+from flask import Flask
 
-load_dotenv()
+app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+app.secret_key = os.environ.get('SECRET_KEY', 'dev_key')
 
-app = create_app()
+from app.routes.ledger import ledger_bp
+app.register_blueprint(ledger_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
