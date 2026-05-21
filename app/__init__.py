@@ -1,28 +1,26 @@
-import os
+# Initialize app package
 from flask import Flask
+from app.routes.auth import auth_bp
+from app.routes.ledger import ledger_bp
+from app.routes.report import report_bp
+import os
 
-def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE=os.path.join(app.instance_path, 'database.db'),
-    )
-
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        app.config.from_mapping(test_config)
-
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
-    # 註冊 blueprints
-    # from .routes import auth, report
-    from app.routes import ledger
-    # app.register_blueprint(auth.bp)
-    app.register_blueprint(ledger.bp)
-    # app.register_blueprint(report.bp)
-
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = os.environ.get('SECRET_KEY', 'dev_secret_key_for_flash_messages')
+    
+    # Register blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(ledger_bp)
+    app.register_blueprint(report_bp)
+    
     return app
+
+def init_db():
+    from app.models.user_data import get_db_connection
+    conn = get_db_connection()
+    schema_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'schema.sql')
+    with open(schema_path, 'r', encoding='utf-8') as f:
+        conn.executescript(f.read())
+    conn.close()
+    print("Database initialized successfully.")

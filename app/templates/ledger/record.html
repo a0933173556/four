@@ -1,96 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center fade-in">
     <div class="col-md-8 col-lg-6">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold m-0">新增碳排紀錄</h3>
-            <a href="{{ url_for('ledger.index') }}" class="btn btn-link text-secondary text-decoration-none"><i class="bi bi-arrow-left me-1"></i>返回</a>
-        </div>
-        
-        <div class="glass-card p-4 p-md-5">
-            <form action="{{ url_for('ledger.create_record') }}" method="POST" id="recordForm">
-                
-                <div class="mb-4">
-                    <label for="category" class="form-label text-secondary fw-semibold">分類</label>
-                    <select class="form-select form-select-lg bg-dark text-white border-secondary" id="category" name="category" required>
-                        <option value="" selected disabled>請選擇分類...</option>
-                        <option value="transport">交通 (Transport)</option>
-                        <option value="food">飲食 (Food)</option>
-                        <option value="electricity">用電 (Electricity)</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label for="action_name" class="form-label text-secondary fw-semibold">行為</label>
-                    <select class="form-select form-select-lg bg-dark text-white border-secondary" id="action_name" name="action_name" required disabled>
-                        <option value="" selected disabled>請先選擇分類...</option>
-                    </select>
-                </div>
-
-                <div class="mb-5">
-                    <label for="parameter_value" class="form-label text-secondary fw-semibold">數值 <span id="unitLabel" class="badge bg-secondary ms-2">單位</span></label>
-                    <input type="number" step="0.01" min="0.01" class="form-control form-control-lg bg-dark text-white border-secondary" id="parameter_value" name="parameter_value" placeholder="輸入數值" required disabled>
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary-gradient btn-lg rounded-pill py-3 fw-bold shadow-lg">
-                        <i class="bi bi-calculator me-2"></i> 換算碳排並儲存
-                    </button>
-                </div>
-            </form>
+        <div class="card glass-card">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h3 class="mb-0"><i class="bi bi-plus-circle-fill text-primary me-2"></i>登錄新行為</h3>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('ledger.create_record') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="category" class="form-label text-muted">行為分類</label>
+                        <select class="form-select text-light" id="category" name="category" required style="background-color: var(--secondary-bg);">
+                            <option value="">請選擇分類...</option>
+                            <option value="交通">交通</option>
+                            <option value="飲食">飲食</option>
+                            <option value="居住">居住</option>
+                            <option value="購物">購物</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="action_name" class="form-label text-muted">具體行為</label>
+                        <select class="form-select text-light" id="action_name" name="action_name" required style="background-color: var(--secondary-bg);">
+                            <option value="">請選擇行為...</option>
+                            <option value="搭乘捷運">搭乘捷運 (交通)</option>
+                            <option value="獨自開車">獨自開車 (交通)</option>
+                            <option value="外帶餐盒">外帶餐盒 (飲食)</option>
+                            <option value="冷氣一小時">冷氣一小時 (居住)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="parameter_value" class="form-label text-muted">數值 (公里數/次數/小時)</label>
+                        <input type="number" step="0.1" min="0" class="form-control" id="parameter_value" name="parameter_value" required placeholder="請輸入數值...">
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">儲存並計算碳排</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // 將後端的字典轉為前端可用的 JSON
-    const factors = {{ factors|tojson }};
-    
-    const categorySelect = document.getElementById('category');
-    const actionSelect = document.getElementById('action_name');
-    const parameterInput = document.getElementById('parameter_value');
-    const unitLabel = document.getElementById('unitLabel');
-    
-    categorySelect.addEventListener('change', function() {
-        const category = this.value;
-        const actions = factors[category];
-        
-        // 清空並重新填入行為選項
-        actionSelect.innerHTML = '<option value="" selected disabled>請選擇行為...</option>';
-        if (actions) {
-            for (const [key, info] of Object.entries(actions)) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = info.name;
-                option.dataset.unit = info.unit; 
-                actionSelect.appendChild(option);
-            }
-            actionSelect.disabled = false;
-        } else {
-            actionSelect.disabled = true;
-            parameterInput.disabled = true;
-            unitLabel.textContent = '單位';
-        }
-        
-        // 切換分類時，重置輸入框
-        parameterInput.value = '';
-        parameterInput.disabled = true;
-        unitLabel.textContent = '單位';
-    });
-    
-    actionSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-            parameterInput.disabled = false;
-            unitLabel.textContent = selectedOption.dataset.unit;
-            parameterInput.focus();
-        } else {
-            parameterInput.disabled = true;
-            unitLabel.textContent = '單位';
-        }
-    });
-</script>
 {% endblock %}
