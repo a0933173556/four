@@ -1,7 +1,21 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session, flash
 from app.models.user_data import CarbonRecordModel, UserModel
 
-ledger_bp = Blueprint('ledger', __name__)
+bp = Blueprint('ledger', __name__)
+
+# 簡易碳排係數表 (kg CO2e)
+CARBON_FACTORS = {
+    '搭乘捷運': 0.04,
+    '獨自開車': 0.25,
+    '外帶餐盒': 0.5,
+    '冷氣一小時': 0.8
+}
+
+SUGGESTIONS = {
+    '獨自開車': '建議改搭大眾運輸工具，可減少約 80% 碳排',
+    '外帶餐盒': '建議自備環保餐盒，減少一次性塑膠垃圾',
+    '冷氣一小時': '建議冷氣設定 26-28 度並搭配電風扇'
+}
 
 # 簡易碳排係數與建議對照表
 CARBON_COEFFICIENTS = {
@@ -20,6 +34,7 @@ CARBON_COEFFICIENTS = {
 }
 
 @ledger_bp.route('/', methods=['GET'])
+@login_required
 def index():
     """顯示首頁儀表板，包含累積碳排、目標進度與近期紀錄列表"""
     user_id = session.get('user_id', 1) # 開發測試預設 user_id=1
@@ -33,11 +48,13 @@ def index():
     return render_template('index.html', records=records, total_carbon=total_carbon, target=target)
 
 @ledger_bp.route('/records/new', methods=['GET'])
+@login_required
 def new_record_page():
     """顯示行為分類登錄表單"""
     return render_template('ledger/record.html')
 
 @ledger_bp.route('/records', methods=['POST'])
+@login_required
 def create_record():
     """接收行為表單，計算碳排與建議，存入資料庫，重導向至首頁"""
     user_id = session.get('user_id', 1)
@@ -82,6 +99,7 @@ def create_record():
     return redirect(url_for('ledger.index'))
 
 @ledger_bp.route('/records/<int:record_id>/delete', methods=['POST'])
+@login_required
 def delete_record(record_id):
     """刪除單筆紀錄，重導向至首頁"""
     user_id = session.get('user_id', 1)

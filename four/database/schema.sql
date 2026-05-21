@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
+    username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     target_carbon_emission REAL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
