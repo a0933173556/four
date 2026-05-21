@@ -2,7 +2,7 @@ from flask import Blueprint, request, redirect, url_for, render_template, sessio
 from app.models import CarbonRecord, User
 from app.routes.report import login_required
 
-ledger_bp = Blueprint('ledger', __name__)
+bp = Blueprint('ledger', __name__)
 
 # 簡易碳排係數表 (kg CO2e)
 CARBON_FACTORS = {
