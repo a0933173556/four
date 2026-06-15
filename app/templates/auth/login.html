@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
+{% block title %}登入 - 數位足跡帳本{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-4">
     <div class="col-md-5">
         <div class="card shadow border-0">
             <div class="card-body p-5">
-                <h3 class="card-title text-center fw-bold mb-4">登入帳本</h3>
+                <div class="text-center mb-4">
+                    <i class="bi bi-tree-fill text-success fs-1"></i>
+                    <h3 class="fw-bold mt-2">登入帳本</h3>
+                </div>
                 <form action="{{ url_for('auth.login') }}" method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label text-muted">帳號</label>
@@ -22,32 +27,6 @@
                 <div class="mt-4 text-center">
                     <p class="text-muted">還沒有帳號嗎？ <a href="{{ url_for('auth.register') }}" class="text-success text-decoration-none fw-bold">立即註冊</a></p>
                 </div>
-{% extends "base.html" %}
-
-{% block content %}
-<div class="row justify-content-center fade-in">
-    <div class="col-md-6 col-lg-5">
-        <div class="card glass-card">
-            <div class="card-header bg-transparent border-0 pt-4 px-4 text-center">
-                <h3 class="mb-0">帳號登入</h3>
-            </div>
-            <div class="card-body p-4">
-                <form action="{{ url_for('auth.handle_login') }}" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label text-muted">帳號</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="password" class="form-label text-muted">密碼</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">登入</button>
-                    </div>
-                </form>
-            </div>
-            <div class="card-footer bg-transparent border-0 pb-4 text-center">
-                <p class="text-muted mb-0">還沒有帳號？ <a href="{{ url_for('auth.register_page') }}" class="text-success text-decoration-none">立即註冊</a></p>
             </div>
         </div>
     </div>

@@ -1,114 +1,76 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, g
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.routes.auth import login_required
-from app.models.user_data import CarbonRecord, User
-from flask import Blueprint, request, redirect, url_for, render_template, session, flash
-from app.models import User, CarbonRecord
-from functools import wraps
+from app.models.user_data import CarbonRecordModel, UserModel
 
-bp = Blueprint('report', __name__)
+report_bp = bp = Blueprint('report', __name__)
 
-@bp.route('/report')
-@login_required
-def index():
-    # 視覺化報表邏輯：將資料彙整後傳遞給前端
-    records = CarbonRecord.get_by_user_id(g.user['id'])
-    
-    # 簡單聚合：依據分類計算總碳排
-    category_data = {}
-    for r in records:
-        cat = r['category']
-        category_data[cat] = category_data.get(cat, 0) + r['carbon_amount']
-        
-    return render_template('report/index.html', category_data=category_data)
 
-@bp.route('/target', methods=('GET', 'POST'))
-@login_required
-def target():
-    if request.method == 'POST':
-        target_emission = request.form.get('target_carbon_emission', type=float)
-        if target_emission is None or target_emission < 0:
-            flash('請輸入有效的目標數值。', 'danger')
-        else:
-            User.update(g.user['id'], {'target_carbon_emission': target_emission})
-            flash('目標已更新！', 'success')
-            return redirect(url_for('ledger.index'))
-            
-    return render_template('report/target.html')
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('請先登入', 'warning')
-            return redirect(url_for('auth.login_page'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-@report_bp.route('/report', methods=['GET'])
+@bp.route('/report', methods=['GET'])
 @login_required
 def report_page():
     """顯示視覺化圖表統計數據"""
-    user_id = session['user_id']
-    records = CarbonRecord.get_all(user_id=user_id)
-    
-    # 準備前端 Chart.js 需要的數據
-    # 1. 各分類的碳排總計 (圓餅圖)
+    user_id = session.get('user_id')
+    records = CarbonRecordModel.get_all(user_id=user_id)
+
+    # 各分類的碳排總計 (圓餅圖)
     category_data = {}
-    
-    # 2. 歷史排放趨勢 (折線圖) - 依日期分組
+
+    # 歷史排放趨勢 (折線圖) - 依日期分組
     trend_data_dict = {}
-    
+
     for r in records:
         # 分類統計
         cat = r['category']
         category_data[cat] = category_data.get(cat, 0) + r['carbon_amount']
-        
+
         # 趨勢統計 (以天為單位)
-        # created_at 格式為 'YYYY-MM-DD HH:MM:SS'
-        date_str = r['created_at'].split(' ')[0]
+        date_str = str(r['created_at']).split(' ')[0] if r['created_at'] else '未知'
         trend_data_dict[date_str] = trend_data_dict.get(date_str, 0) + r['carbon_amount']
-    
+
     # 將趨勢數據依日期排序
     sorted_dates = sorted(trend_data_dict.keys())
     trend_labels = sorted_dates
-    trend_values = [trend_data_dict[d] for d in sorted_dates]
-    
+    trend_values = [round(trend_data_dict[d], 2) for d in sorted_dates]
+
     return render_template(
-        'report/index.html', 
+        'report/index.html',
         category_data=category_data,
         trend_labels=trend_labels,
         trend_values=trend_values
     )
 
-@report_bp.route('/target', methods=['GET'])
+
+@bp.route('/target', methods=['GET'])
 @login_required
 def target_page():
     """顯示每月減碳目標設定表單"""
-    user_id = session['user_id']
-    user = User.get_by_id(user_id)
+    user_id = session.get('user_id')
+    user = UserModel.get_by_id(user_id)
     if not user:
         flash('找不到使用者資料', 'danger')
-        return redirect(url_for('auth.login_page'))
-        
+        return redirect(url_for('auth.login'))
+
     return render_template('report/target.html', target=user['target_carbon_emission'])
 
-@report_bp.route('/target', methods=['POST'])
+
+@bp.route('/target', methods=['POST'])
 @login_required
 def update_target():
     """接收表單，更新目標，重導向至首頁"""
-    user_id = session['user_id']
+    user_id = session.get('user_id')
     target_value = request.form.get('target_carbon_emission')
-    
+
     if not target_value:
         flash('請輸入減碳目標', 'warning')
         return redirect(url_for('report.target_page'))
-        
+
     try:
         target_value = float(target_value)
     except ValueError:
         flash('請輸入有效的數字', 'warning')
         return redirect(url_for('report.target_page'))
-        
-    success = User.update(user_id, {'target_carbon_emission': target_value})
+
+    success = UserModel.update(user_id, {'target_carbon_emission': target_value})
     if success:
         flash('減碳目標更新成功！', 'success')
         return redirect(url_for('ledger.index'))
